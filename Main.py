@@ -124,9 +124,14 @@ class CarnetAdressesUI(ctk.CTk):
         self.resultats_frame = ctk.CTkFrame(self.frame_principal, corner_radius=10)
         self.resultats_frame.grid(row=6, column=0, columnspan=4, pady=10, padx=10, sticky="nsew")
 
-        # Remplacer Listbox par Treeview
+        # Configuration du Treeview avec une liaison pour le tri
         self.resultats_treeview = ttk.Treeview(self.resultats_frame, columns=("ID", "Nom", "Prénom", "Email", "Téléphone"), show='headings')
         self.resultats_treeview.pack(fill="both", expand=True)
+
+        # Configurer les en-têtes de colonne et les lier à la fonction de tri
+        for col in self.resultats_treeview["columns"]:
+            self.resultats_treeview.heading(col, text=col, command=lambda _col=col: self.trier_treeview(self.resultats_treeview, _col, False))
+
 
         # Configurer les en-têtes de colonne
                 # Configurer les en-têtes de colonne
@@ -141,6 +146,19 @@ class CarnetAdressesUI(ctk.CTk):
 
         self.afficher_tous_button = ctk.CTkButton(self.frame_principal, text="Afficher tous les contacts", fg_color="#0000ff", hover_color="#00008b", command=self.afficher_tous_les_contacts)
         self.afficher_tous_button.grid(row=7, column=0, columnspan=4, pady=10, padx=10)
+
+    def trier_treeview(self, tv, col, reverse):
+        # Récupérer les données de la colonne
+        liste = [(tv.set(k, col), k) for k in tv.get_children('')]
+        # Trier la liste
+        liste.sort(reverse=reverse)
+
+        # Réarranger les données dans le Treeview
+        for index, (val, k) in enumerate(liste):
+            tv.move(k, '', index)
+
+        # Inverser le tri pour la prochaine fois
+        tv.heading(col, command=lambda: self.trier_treeview(tv, col, not reverse))
 
     def effacer_champs(self):
         self.nom_entry.delete(0, tk.END)
