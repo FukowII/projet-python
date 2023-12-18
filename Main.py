@@ -138,11 +138,11 @@ class CarnetAdressesUI(ctk.CTk):
         self.email_entry.delete(0, tk.END)
         self.telephone_entry.delete(0, tk.END)
 
-    def validate_phone_number(self, phone_number):
+    def valider_numero_telephone(self, numero_telephone):
         pattern = r"^\d{10}$"  # Format de numéro de téléphone à 10 chiffres (à adapter selon le format attendu)
-        return bool(re.match(pattern, phone_number))
+        return bool(re.match(pattern, numero_telephone))
 
-    def validate_email(self, email):
+    def valider_email(self, email):
         pattern = r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"
         return bool(re.match(pattern, email))
 
@@ -152,17 +152,17 @@ class CarnetAdressesUI(ctk.CTk):
         email = self.email_entry.get()
         telephone = self.telephone_entry.get()
 
-        if not self.validate_email(email):
+        if not self.valider_email(email):
             messagebox.showwarning("Avertissement", "Adresse e-mail non valide")
             return
 
-        if not self.validate_phone_number(telephone):
+        if not self.valider_numero_telephone(telephone):
             messagebox.showwarning("Avertissement", "Numéro de téléphone non valide")
             return
         contact = Contact(self.nom_entry.get(), self.prenom_entry.get(), self.email_entry.get(), self.telephone_entry.get())
         self.carnet.ajouter_contact(contact)
         messagebox.showinfo("Succès", "Contact ajouté avec succès")
-        self.rechercher_contact()  # Actualiser la liste des contacts
+        self.rechercher_contact_par_id()  # Actualiser la liste des contacts
 
     def rechercher_contact(self):
         id_contact = self.id_contact_entry.get()
