@@ -145,24 +145,41 @@ class CarnetAdressesUI(ctk.CTk):
     def valider_email(self, email):
         pattern = r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"
         return bool(re.match(pattern, email))
-
+    
+    def supprimer_contact(self):
+        id_contact = self.id_contact_entry.get()
+        if id_contact:
+            try:
+                id_contact = int(id_contact)
+                contact_existant = self.carnet.rechercher_contact_par_id(id_contact)
+                if contact_existant:
+                    confirmation = messagebox.askyesno("Confirmation de suppression", "Êtes-vous sûr de vouloir supprimer ce contact?")
+                    if confirmation:
+                        self.carnet.supprimer_contact(id_contact)
+                        messagebox.showinfo("Succès", "Contact supprimé avec succès")
+                        self.rechercher_contact()  # Actualiser la liste des contacts uniquement si le contact existe
+                else:
+                    messagebox.showwarning("Avertissement", "ID du contact introuvable")
+            except ValueError:
+                print("L'ID doit être un nombre entier.")
+        
     def ajouter_contact(self):
         nom = self.nom_entry.get()
         prenom = self.prenom_entry.get()
         email = self.email_entry.get()
         telephone = self.telephone_entry.get()
 
-        if not self.valider_email(email):
+        if not self.validate_email(email):
             messagebox.showwarning("Avertissement", "Adresse e-mail non valide")
             return
 
-        if not self.valider_numero_telephone(telephone):
+        if not self.validate_phone_number(telephone):
             messagebox.showwarning("Avertissement", "Numéro de téléphone non valide")
             return
         contact = Contact(self.nom_entry.get(), self.prenom_entry.get(), self.email_entry.get(), self.telephone_entry.get())
         self.carnet.ajouter_contact(contact)
         messagebox.showinfo("Succès", "Contact ajouté avec succès")
-        self.rechercher_contact_par_id()  # Actualiser la liste des contacts
+        self.rechercher_contact()  # Actualiser la liste des contacts
 
     def rechercher_contact(self):
         id_contact = self.id_contact_entry.get()
@@ -170,14 +187,21 @@ class CarnetAdressesUI(ctk.CTk):
             try:
                 id_contact = int(id_contact)
                 contact = self.carnet.rechercher_contact_par_id(id_contact)
-                self.resultats_listbox.delete(0, tk.END)
                 if contact:
-                    self.resultats_listbox.insert(tk.END, f"ID: {contact[0][0]}, Nom: {contact[0][1]}, Prénom: {contact[0][2]}, Email: {contact[0][3]}, Téléphone: {contact[0][4]}")
+                    # Remplissez les champs avec les données du contact trouvé
+                    self.nom_entry.delete(0, tk.END)
+                    self.nom_entry.insert(0, contact[0][1])
+                    self.prenom_entry.delete(0, tk.END)
+                    self.prenom_entry.insert(0, contact[0][2])
+                    self.email_entry.delete(0, tk.END)
+                    self.email_entry.insert(0, contact[0][3])
+                    self.telephone_entry.delete(0, tk.END)
+                    self.telephone_entry.insert(0, contact[0][4])
                 else:
                     messagebox.showwarning("Avertissement", "ID du contact introuvable")
             except ValueError:
                 print("L'ID doit être un nombre entier.")
-
+                
     def rechercher_contact_par_multi_critere(self):
         nom = self.nom_entry.get()
         prenom = self.prenom_entry.get()
