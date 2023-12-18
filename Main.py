@@ -5,8 +5,6 @@ import tkinter.messagebox as messagebox
 import re
 from tkinter import ttk
 
-
-
 class Contact:
     def __init__(self, nom, prenom, email, telephone):
         self.nom = nom
@@ -19,7 +17,7 @@ class CarnetAdresses:
     def __init__(self):
         self.conn = sqlite3.connect('contacts.db')
         self.cursor = self.conn.cursor()
-        self.creer_table_contacts()
+        self.creer_table_contacts() 
 
     def creer_table_contacts(self):
         self.cursor.execute('''
@@ -67,7 +65,6 @@ class CarnetAdresses:
         self.cursor.execute('DELETE FROM contacts WHERE id=?', (id_contact,))
         self.conn.commit()
 
-
 class Carnet_adresses(ctk.CTk):
     def __init__(self):
         super().__init__()
@@ -78,8 +75,6 @@ class Carnet_adresses(ctk.CTk):
         self.frame_principal = ctk.CTkFrame(self, corner_radius=10)
         self.frame_principal.pack(pady=20, padx=20, fill="both", expand=True)
 
-        ctk.CTkLabel(self.frame_principal, text="Nom :").grid(row=0, column=0, pady=10, padx=10)
-        ctk.CTkLabel(self.frame_principal, text="Prénom :").grid(row=1, column=0, pady=10, padx=10)
         ctk.CTkLabel(self.frame_principal, text="Email :").grid(row=2, column=0, pady=10, padx=10)
         ctk.CTkLabel(self.frame_principal, text="Téléphone :").grid(row=3, column=0, pady=10, padx=10)
 
@@ -128,18 +123,10 @@ class Carnet_adresses(ctk.CTk):
         self.resultats_treeview = ttk.Treeview(self.resultats_frame, columns=("ID", "Nom", "Prénom", "Email", "Téléphone"), show='headings')
         self.resultats_treeview.pack(fill="both", expand=True)
 
-        # Configurer les en-têtes de colonne et les lier à la fonction de tri
-        for col in self.resultats_treeview["columns"]:
-            self.resultats_treeview.heading(col, text=col, command=lambda _col=col: self.trier_treeview(self.resultats_treeview, _col, False))
-
-
         # Configurer les en-têtes de colonne
-                # Configurer les en-têtes de colonne
         for col in self.resultats_treeview["columns"]:
             self.resultats_treeview.heading(col, text=col)
             self.resultats_treeview.column(col, width=100, anchor="center")
-
-        #
 
         self.carnet = CarnetAdresses()
         self.contact_actuel = None  # Variable pour stocker les données du contact actuellement sélectionné
@@ -298,7 +285,6 @@ class Carnet_adresses(ctk.CTk):
             except ValueError:
                 print("L'ID doit être un nombre entier.")
 
-#eazohezazl
 if __name__ == "__main__":
     app = Carnet_adresses()
     app.mainloop()
