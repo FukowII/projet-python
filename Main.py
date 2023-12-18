@@ -190,7 +190,9 @@ class CarnetAdressesUI(ctk.CTk):
                     messagebox.showwarning("Avertissement", "ID du contact introuvable")
             except ValueError:
                 print("L'ID doit être un nombre entier.")
-        
+        else:
+            messagebox.showwarning("Avertissement", "Veuillez entrer un ID du contact à supprimer.")
+
     def ajouter_contact(self):
         nom = self.nom_entry.get()
         prenom = self.prenom_entry.get()
@@ -215,30 +217,31 @@ class CarnetAdressesUI(ctk.CTk):
             try:
                 id_contact = int(id_contact)
                 contact = self.carnet.rechercher_contact_par_id(id_contact)
+                self.resultats_treeview.delete(*self.resultats_treeview.get_children())  # Effacez les anciens résultats
                 if contact:
-                    # Remplissez les champs avec les données du contact trouvé
-                    self.nom_entry.delete(0, tk.END)
-                    self.nom_entry.insert(0, contact[0][1])
-                    self.prenom_entry.delete(0, tk.END)
-                    self.prenom_entry.insert(0, contact[0][2])
-                    self.email_entry.delete(0, tk.END)
-                    self.email_entry.insert(0, contact[0][3])
-                    self.telephone_entry.delete(0, tk.END)
-                    self.telephone_entry.insert(0, contact[0][4])
+                    # Affichez uniquement le contact correspondant dans le Treeview
+                    self.resultats_treeview.insert("", tk.END, values=contact[0])
                 else:
                     messagebox.showwarning("Avertissement", "ID du contact introuvable")
             except ValueError:
                 print("L'ID doit être un nombre entier.")
-                
+
     def rechercher_contact_par_multi_critere(self):
         nom = self.nom_entry.get()
         prenom = self.prenom_entry.get()
         telephone = self.telephone_entry.get()
         email = self.email_entry.get()
+        
+        # Obtenez les résultats de la recherche en fonction des critères
         contacts = self.carnet.rechercher_contact_par_multi_critere(nom, prenom, telephone, email)
-        self.resultats_listbox.delete(0, tk.END)
+        
+        # Effacez toutes les lignes existantes du Treeview
+        for row in self.resultats_treeview.get_children():
+            self.resultats_treeview.delete(row)
+
+        # Insérez les résultats de la recherche dans le Treeview
         for contact in contacts:
-            self.resultats_listbox.insert(tk.END, f"ID: {contact[0]}, Nom: {contact[1]}, Prénom: {contact[2]}, Email: {contact[3]}, Téléphone: {contact[4]}")
+            self.resultats_treeview.insert("", tk.END, values=contact)
 
     def afficher_tous_les_contacts(self):
         contacts = self.carnet.rechercher_contact_par_nom('')
