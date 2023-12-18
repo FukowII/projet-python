@@ -197,11 +197,11 @@ class CarnetAdressesUI(ctk.CTk):
         email = self.email_entry.get()
         telephone = self.telephone_entry.get()
 
-        if not self.validate_email(email):
+        if not self.valider_email(email):
             messagebox.showwarning("Avertissement", "Adresse e-mail non valide")
             return
 
-        if not self.validate_phone_number(telephone):
+        if not self.valider_numero_telephone(telephone):
             messagebox.showwarning("Avertissement", "Numéro de téléphone non valide")
             return
         contact = Contact(self.nom_entry.get(), self.prenom_entry.get(), self.email_entry.get(), self.telephone_entry.get())
