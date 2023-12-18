@@ -2,7 +2,7 @@ import customtkinter as ctk
 import sqlite3
 import tkinter as tk
 import tkinter.messagebox as messagebox
-from ttkthemes import ThemedStyle
+import re
 
 
 
@@ -105,16 +105,16 @@ class CarnetAdressesUI(ctk.CTk):
         self.rechercher_multi_critere_button.grid(row=0, column=2, rowspan=4, pady=10, padx=10)
 
         self.rechercher_button = ctk.CTkButton(self.frame_principal, text="Rechercher", fg_color="#0000ff", hover_color="#00008b", command=self.rechercher_contact)
-        self.rechercher_button.grid(row=4, column=1, pady=10, padx=10)
+        self.rechercher_button.grid(row=5, column=2, pady=10, padx=10)
 
         self.supprimer_button = ctk.CTkButton(self.frame_principal, text="Supprimer", fg_color="#0000ff", hover_color="#00008b", command=lambda: self.supprimer_contact())
-        self.supprimer_button.grid(row=4, column=2, pady=10, padx=10)
+        self.supprimer_button.grid(row=4, column=1, pady=10, padx=10)
 
         self.effacer_button = ctk.CTkButton(self.frame_principal, text="Effacer", fg_color="#0000ff", hover_color="#00008b", command=self.effacer_champs)
-        self.effacer_button.grid(row=4, column=4, pady=10, padx=10)
+        self.effacer_button.grid(row=4, column=3, pady=10, padx=10)
 
         self.modifier_button = ctk.CTkButton(self.frame_principal, text="Modifier", fg_color="#0000ff", hover_color="#00008b", command=self.modifier_contact)
-        self.modifier_button.grid(row=4, column=3, pady=10, padx=10)
+        self.modifier_button.grid(row=4, column=2, pady=10, padx=10)
 
         ctk.CTkLabel(self.frame_principal, text="ID du Contact :").grid(row=5, column=0, pady=10, padx=10)
         self.id_contact_entry = ctk.CTkEntry(self.frame_principal)
@@ -138,7 +138,27 @@ class CarnetAdressesUI(ctk.CTk):
         self.email_entry.delete(0, tk.END)
         self.telephone_entry.delete(0, tk.END)
 
+    def validate_phone_number(self, phone_number):
+        pattern = r"^\d{10}$"  # Format de numéro de téléphone à 10 chiffres (à adapter selon le format attendu)
+        return bool(re.match(pattern, phone_number))
+
+    def validate_email(self, email):
+        pattern = r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"
+        return bool(re.match(pattern, email))
+
     def ajouter_contact(self):
+        nom = self.nom_entry.get()
+        prenom = self.prenom_entry.get()
+        email = self.email_entry.get()
+        telephone = self.telephone_entry.get()
+
+        if not self.validate_email(email):
+            messagebox.showwarning("Avertissement", "Adresse e-mail non valide")
+            return
+
+        if not self.validate_phone_number(telephone):
+            messagebox.showwarning("Avertissement", "Numéro de téléphone non valide")
+            return
         contact = Contact(self.nom_entry.get(), self.prenom_entry.get(), self.email_entry.get(), self.telephone_entry.get())
         self.carnet.ajouter_contact(contact)
         messagebox.showinfo("Succès", "Contact ajouté avec succès")
