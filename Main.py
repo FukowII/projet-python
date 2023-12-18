@@ -48,7 +48,7 @@ class CarnetAdresses:
         self.cursor.execute('SELECT * FROM contacts WHERE id = ?', (id_contact,))
         return self.cursor.fetchall()
 
-    def rechercher_contact_par_multi_critere(self, nom, prenom, telephone, email):
+    def rechercher_perso(self, nom, prenom, telephone, email):
         self.cursor.execute('''
             SELECT * FROM contacts
             WHERE nom LIKE ? AND prenom LIKE ? AND telephone LIKE ? AND email LIKE ?
@@ -68,7 +68,7 @@ class CarnetAdresses:
         self.conn.commit()
 
 
-class CarnetAdressesUI(ctk.CTk):
+class Carnet_adresses(ctk.CTk):
     def __init__(self):
         super().__init__()
 
@@ -102,7 +102,7 @@ class CarnetAdressesUI(ctk.CTk):
         self.ajouter_button = ctk.CTkButton(self.frame_principal, text="Ajouter", fg_color="#0000ff", hover_color="#00008b", command=self.ajouter_contact)
         self.ajouter_button.grid(row=4, column=0, pady=10, padx=10)
 
-        self.rechercher_multi_critere_button = ctk.CTkButton(self.frame_principal, text="Rechercher par critères", fg_color="#0000ff", hover_color="#00008b", command=self.rechercher_contact_par_multi_critere)
+        self.rechercher_multi_critere_button = ctk.CTkButton(self.frame_principal, text="Rechercher par critères", fg_color="#0000ff", hover_color="#00008b", command=self.rechercher_perso)
         self.rechercher_multi_critere_button.grid(row=0, column=2, rowspan=4, pady=10, padx=10)
 
         self.rechercher_button = ctk.CTkButton(self.frame_principal, text="Rechercher", fg_color="#0000ff", hover_color="#00008b", command=self.rechercher_contact)
@@ -144,7 +144,7 @@ class CarnetAdressesUI(ctk.CTk):
         self.carnet = CarnetAdresses()
         self.contact_actuel = None  # Variable pour stocker les données du contact actuellement sélectionné
 
-        self.afficher_tous_button = ctk.CTkButton(self.frame_principal, text="Afficher tous les contacts", fg_color="#0000ff", hover_color="#00008b", command=self.afficher_tous_les_contacts)
+        self.afficher_tous_button = ctk.CTkButton(self.frame_principal, text="Afficher tous les contacts", fg_color="#0000ff", hover_color="#00008b", command=self.afficher_tous)
         self.afficher_tous_button.grid(row=7, column=0, columnspan=4, pady=10, padx=10)
 
     def trier_treeview(self, tv, col, reverse):
@@ -226,14 +226,14 @@ class CarnetAdressesUI(ctk.CTk):
             except ValueError:
                 print("L'ID doit être un nombre entier.")
 
-    def rechercher_contact_par_multi_critere(self):
+    def rechercher_perso(self):
         nom = self.nom_entry.get()
         prenom = self.prenom_entry.get()
         telephone = self.telephone_entry.get()
         email = self.email_entry.get()
         
         # Obtenez les résultats de la recherche en fonction des critères
-        contacts = self.carnet.rechercher_contact_par_multi_critere(nom, prenom, telephone, email)
+        contacts = self.carnet.rechercher_perso(nom, prenom, telephone, email)
         
         # Effacez toutes les lignes existantes du Treeview
         for row in self.resultats_treeview.get_children():
@@ -243,7 +243,7 @@ class CarnetAdressesUI(ctk.CTk):
         for contact in contacts:
             self.resultats_treeview.insert("", tk.END, values=contact)
 
-    def afficher_tous_les_contacts(self):
+    def afficher_tous(self):
         contacts = self.carnet.rechercher_contact_par_nom('')
         self.resultats_treeview.delete(*self.resultats_treeview.get_children())
         for contact in contacts:
@@ -300,5 +300,5 @@ class CarnetAdressesUI(ctk.CTk):
 
 #eazohezazl
 if __name__ == "__main__":
-    app = CarnetAdressesUI()
+    app = Carnet_adresses()
     app.mainloop()
