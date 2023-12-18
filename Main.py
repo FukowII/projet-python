@@ -3,6 +3,7 @@ import sqlite3
 import tkinter as tk
 import tkinter.messagebox as messagebox
 import re
+from tkinter import ttk
 
 
 
@@ -123,8 +124,17 @@ class CarnetAdressesUI(ctk.CTk):
         self.resultats_frame = ctk.CTkFrame(self.frame_principal, corner_radius=10)
         self.resultats_frame.grid(row=6, column=0, columnspan=4, pady=10, padx=10, sticky="nsew")
 
-        self.resultats_listbox = tk.Listbox(self.resultats_frame)
-        self.resultats_listbox.pack(fill="both", expand=True)
+        # Remplacer Listbox par Treeview
+        self.resultats_treeview = ttk.Treeview(self.resultats_frame, columns=("ID", "Nom", "Prénom", "Email", "Téléphone"), show='headings')
+        self.resultats_treeview.pack(fill="both", expand=True)
+
+        # Configurer les en-têtes de colonne
+                # Configurer les en-têtes de colonne
+        for col in self.resultats_treeview["columns"]:
+            self.resultats_treeview.heading(col, text=col)
+            self.resultats_treeview.column(col, width=100, anchor="center")
+
+        #
 
         self.carnet = CarnetAdresses()
         self.contact_actuel = None  # Variable pour stocker les données du contact actuellement sélectionné
@@ -214,9 +224,9 @@ class CarnetAdressesUI(ctk.CTk):
 
     def afficher_tous_les_contacts(self):
         contacts = self.carnet.rechercher_contact_par_nom('')
-        self.resultats_listbox.delete(0, tk.END)
+        self.resultats_treeview.delete(*self.resultats_treeview.get_children())
         for contact in contacts:
-            self.resultats_listbox.insert(tk.END, f"ID: {contact[0]}, Nom: {contact[1]}, Prénom: {contact[2]}, Email: {contact[3]}, Téléphone: {contact[4]}")
+            self.resultats_treeview.insert("", tk.END, values=contact)
 
     def modifier_contact(self):
         id_contact = self.id_contact_entry.get()
